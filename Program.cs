@@ -2,40 +2,52 @@ using Avalonia;
 using System;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using AvaloniaDiApp.Views;
+using AvaloniaDiApp.ViewModels;
 
 namespace AvaloniaDiApp;
 
 sealed class Program
 {
-    // アプリケーション全体でアクセス可能な Host インスタンス
-    public static IHost? AppHost { get; private set; }
-
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
     [STAThread]
     public static void Main(string[] args)
     {
-        // 1. Generic Host の構築
-        AppHost = Host.CreateDefaultBuilder(args)
+        // 1. Generic Host の構築 (ローカル変数として保持しスタティック公開を避ける)
+        var host = Host.CreateDefaultBuilder(args)
             .ConfigureServices((hostContext, services) =>
             {
-                // ここにViewModelやサービスの登録を追加していきます
-                // 例: services.AddSingleton<MainWindowViewModel>();
+                // App自身の登録
+                services.AddSingleton<App>();
+
+                // ViewModelの登録
+                services.AddTransient<MainWindowViewModel>();
+
+                // Viewの登録
+                services.AddTransient<MainWindow>();
             })
             .Build();
 
-        // 2. Host の開始 (IHostedServiceなどのバックグラウンドタスクが動く)
-        AppHost.Start();
+        // 2. Host の開始
+        host.Start();
 
-        // 3. Avalonia アプリケーションを起動し、メインループに入る
-        BuildAvaloniaApp()
+        // 3. Avalonia アプリケーション起動 (DIからAppクラスを生成)
+        BuildAvaloniaApp(host.Services)
             .StartWithClassicDesktopLifetime(args);
 
         // 4. アプリ終了時に Host を安全に停止・破棄する
-        AppHost.StopAsync().GetAwaiter().GetResult();
-        AppHost.Dispose();
+        host.StopAsync().GetAwaiter().GetResult();
+        host.Dispose();
     }
+
+    // ランタイム用の設定 (DIからAppを取得する)
+    public static AppBuilder BuildAvaloniaApp(IServiceProvider services)
+        => AppBuilder.Configure(() => services.GetRequiredService<App>())
+            .UsePlatformDetect()
+            .WithInterFont()
+            .LogToTrace();
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
