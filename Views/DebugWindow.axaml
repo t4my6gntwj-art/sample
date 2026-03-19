@@ -1,0 +1,21 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AvaloniaDiApp.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="300"
+        Width="400" Height="300"
+        x:Class="AvaloniaDiApp.Views.DebugWindow"
+        x:DataType="vm:DebugWindowViewModel"
+        Title="DebugWindow">
+
+    <Design.DataContext>
+        <vm:DebugWindowViewModel/>
+    </Design.DataContext>
+
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
+        <TextBlock Text="{Binding DebugMessage}" HorizontalAlignment="Center" />
+        <Button Content="Test ボタン" Command="{Binding TestCommand}" HorizontalAlignment="Center" />
+    </StackPanel>
+
+</Window>

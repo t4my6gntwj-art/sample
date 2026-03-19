@@ -24,9 +24,11 @@ sealed class Program
 
                 // ViewModelの登録
                 services.AddTransient<MainWindowViewModel>();
+                services.AddTransient<DebugWindowViewModel>();
 
                 // Viewの登録
                 services.AddTransient<MainWindow>();
+                services.AddTransient<DebugWindow>();
             })
             .Build();
 
