@@ -23,8 +23,8 @@ sealed class Program
                 services.AddSingleton<App>();
 
                 // ViewModelの登録
-                services.AddTransient<MainWindowViewModel>();
-                services.AddTransient<DebugWindowViewModel>();
+                services.AddSingleton<MainWindowViewModel>();
+                services.AddSingleton<DebugWindowViewModel>();
 
                 // Viewの登録
                 services.AddTransient<MainWindow>();

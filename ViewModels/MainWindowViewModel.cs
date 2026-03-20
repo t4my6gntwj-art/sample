@@ -1,6 +1,9 @@
-﻿namespace AvaloniaDiApp.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace AvaloniaDiApp.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    public string Greeting { get; } = "Welcome to Avalonia!";
+    [ObservableProperty]
+    private string _greeting = "Welcome to Avalonia!";
 }
