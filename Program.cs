@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using AvaloniaDiApp.Views;
 using AvaloniaDiApp.ViewModels;
+using AvaloniaDiApp.Services;
 
 namespace AvaloniaDiApp;
 
@@ -19,12 +20,18 @@ sealed class Program
         var host = Host.CreateDefaultBuilder(args)
             .ConfigureServices((hostContext, services) =>
             {
+                // サービスの登録
+                services.AddSingleton<LayoutViewModel>();
+                services.AddSingleton<IContentHolder>(sp => sp.GetRequiredService<LayoutViewModel>());
+                services.AddSingleton<INavigationService, NavigationService>();
+
                 // App自身の登録
                 services.AddSingleton<App>();
 
                 // ViewModelの登録
                 services.AddSingleton<MainWindowViewModel>();
                 services.AddSingleton<DebugWindowViewModel>();
+                services.AddSingleton<LayoutViewModel>();
                 services.AddTransient<HomeViewModel>();
                 services.AddTransient<SettingViewModel>();
                 services.AddTransient<StatusViewModel>();

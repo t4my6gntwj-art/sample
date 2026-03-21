@@ -7,6 +7,6 @@
              x:Class="AvaloniaDiApp.Views.HomeView"
              x:DataType="vm:HomeViewModel">
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBlock Text="{Binding Message}" FontSize="18" FontWeight="Bold"/>
+        <TextBlock Text="{Binding Message}" FontSize="18" FontWeight="Bold" Foreground="Red"/>
     </StackPanel>
 </UserControl>

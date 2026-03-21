@@ -9,14 +9,11 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private string _greeting = "Welcome to Avalonia!";
 
+    // プロパティのみを持ち、中身は外部からセットされるのを待つ
     [ObservableProperty]
     private object? _currentViewModel;
 
     public MainWindowViewModel()
     {
-        // TODO: DIコンテナからLayoutViewを取得するように変更する  
-        //       IMainLayoutBuilder を作ってそこで、
-        //       メイン画面のレイアウトのインスタンスを生成するようにするのがベストなんだろうけど、さすがにくどいので簡易にnewしておく
-        _currentViewModel = new LayoutViewModel();
     }
 }

@@ -40,7 +40,19 @@ public partial class App : Application
             DisableAvaloniaDataAnnotationValidation();
 
             // DI コンテナ (_services) から MainWindow を解決する
-            desktop.MainWindow = _services?.GetRequiredService<MainWindow>();
+            // DI コンテナ (_services) からメインウィンドウを取得
+            var mainWindow = _services?.GetRequiredService<MainWindow>();
+            
+            if (mainWindow != null)
+            {
+                // 起動時の初期画面（LayoutViewModel）をセット
+                if (mainWindow.DataContext is MainWindowViewModel vm)
+                {
+                    vm.CurrentViewModel = _services?.GetRequiredService<LayoutViewModel>();
+                }
+
+                desktop.MainWindow = mainWindow;
+            }
         }
 
         base.OnFrameworkInitializationCompleted();

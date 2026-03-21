@@ -1,19 +1,23 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:AvaloniaDiApp.ViewModels"
+             x:DataType="vm:LayoutViewModel"
              x:Class="AvaloniaDiApp.Views.LayoutView">
     <Grid RowDefinitions="Auto, *, Auto">
         <!-- ヘッダー領域 -->
         <Border Grid.Row="0" Background="#333333" BorderBrush="Black" BorderThickness="0,0,0,1" Height="60" Padding="15,0">
             <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                 <Button Content="HOME" Width="100" Height="35" 
+                        Command="{Binding NavigateToHomeCommand}"
                         Background="#444444" Foreground="White"
                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                 <Button Content="SETTING" Width="100" Height="35" 
+                        Command="{Binding NavigateToSettingCommand}"
                         Background="#444444" Foreground="White"
                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                 <Button Content="STATUS" Width="100" Height="35" 
+                        Command="{Binding NavigateToStatusCommand}"
                         Background="#444444" Foreground="White"
                         HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
             </StackPanel>
@@ -21,10 +25,7 @@
 
         <!-- メインコンテンツ領域 -->
         <Border Grid.Row="1" Background="White" Padding="20">
-            <StackPanel Spacing="10">
-                <TextBlock Text="メインコンテンツ" FontSize="18"/>
-                <TextBlock Text="ここに動的なコンテンツが表示されます。" Foreground="Gray"/>
-            </StackPanel>
+            <ContentControl Content="{Binding CurrentViewModel}" />
         </Border>
 
         <!-- フッター領域 -->
