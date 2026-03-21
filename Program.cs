@@ -5,6 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using AvaloniaDiApp.Views;
 using AvaloniaDiApp.ViewModels;
 using AvaloniaDiApp.Services;
+using AvaloniaDiApp.Services.Navigation;
+using AvaloniaDiApp.Models.Data;
+using AvaloniaDiApp.Models.Services;
 
 namespace AvaloniaDiApp;
 
@@ -24,6 +27,9 @@ sealed class Program
                 services.AddSingleton<LayoutViewModel>();
                 services.AddSingleton<IContentHolder>(sp => sp.GetRequiredService<LayoutViewModel>());
                 services.AddSingleton<INavigationService, NavigationService>();
+                services.AddSingleton<ISettingsService, SettingsService>();
+                services.AddSingleton<IPowerStatusService, PowerStatusService>();
+                services.AddSingleton<IConnectionStatusService, ConnectionStatusService>();
 
                 // App自身の登録
                 services.AddSingleton<App>();
