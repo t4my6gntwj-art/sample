@@ -6,7 +6,31 @@
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="300"
              x:Class="AvaloniaDiApp.Views.StatusView"
              x:DataType="vm:StatusViewModel">
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBlock Text="{Binding Message}" FontSize="18" Foreground="Green"/>
-    </StackPanel>
+    <UserControl.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid Background="#1a1a1a">
+        <StackPanel Margin="20" Spacing="15" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <TextBlock Text="システムステータス" FontSize="22" FontWeight="Bold" Margin="0,0,0,10" Foreground="SkyBlue" />
+            
+            <StackPanel Spacing="5">
+                <TextBlock Text="【電源情報】" FontWeight="SemiBold" Foreground="Goldenrod" />
+                <TextBlock Text="{Binding BatteryLevel, StringFormat='バッテリー残量: {0}%'}" />
+                <TextBlock Text="{Binding IsCharging, StringFormat='充電状態: {0}'}" />
+                <TextBlock Text="{Binding PowerMode, StringFormat='動作モード: {0}'}" />
+            </StackPanel>
+
+            <Separator Background="#33FFFFFF" Height="1" Margin="0,10" />
+
+            <StackPanel Spacing="5">
+                <TextBlock Text="【接続情報】" FontWeight="SemiBold" Foreground="SkyBlue" />
+                <TextBlock Text="{Binding IsOnline, StringFormat='オンライン状態: {0}'}" />
+                <TextBlock Text="{Binding ConnectionType, StringFormat='接続タイプ: {0}'}" />
+                <TextBlock Text="{Binding SignalStrength, StringFormat='信号強度: {0}%'}" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
 </UserControl>
