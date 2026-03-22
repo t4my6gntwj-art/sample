@@ -28,8 +28,16 @@ sealed class Program
                 services.AddSingleton<IContentHolder>(sp => (IContentHolder)sp.GetRequiredService<LayoutViewModel>());
                 services.AddSingleton<INavigationService, NavigationService>();
                 services.AddSingleton<ISettingsService, SettingsService>();
-                services.AddSingleton<IPowerStatusService, PowerStatusService>();
-                services.AddSingleton<IConnectionStatusService, ConnectionStatusService>();
+
+                // Power リポジトリの登録 (1つのシングルトンを2つの口で公開)
+                services.AddSingleton<PowerStatusRepository>();
+                services.AddSingleton<IPowerStatusProvider>(sp => sp.GetRequiredService<PowerStatusRepository>());
+                services.AddSingleton<IPowerStatusReceiver>(sp => sp.GetRequiredService<PowerStatusRepository>());
+
+                // Connection リポジトリの登録
+                services.AddSingleton<ConnectionStatusRepository>();
+                services.AddSingleton<IConnectionStatusProvider>(sp => sp.GetRequiredService<ConnectionStatusRepository>());
+                services.AddSingleton<IConnectionStatusReceiver>(sp => sp.GetRequiredService<ConnectionStatusRepository>());
 
                 // App自身の登録
                 services.AddSingleton<App>();

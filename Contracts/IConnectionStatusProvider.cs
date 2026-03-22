@@ -3,7 +3,7 @@ using AvaloniaDiApp.Models.Data;
 
 namespace AvaloniaDiApp.Contracts;
 
-public interface IConnectionStatusService
+public interface IConnectionStatusProvider
 {
     ConnectionStatus CurrentStatus { get; }
     event Action<ConnectionStatus>? StatusUpdated;

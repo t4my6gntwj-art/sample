@@ -8,8 +8,8 @@ namespace AvaloniaDiApp.ViewModels;
 
 public partial class StatusViewModel : ViewModelBase
 {
-    private readonly IPowerStatusService _powerService;
-    private readonly IConnectionStatusService _connectionService;
+    private readonly IPowerStatusProvider _powerProvider;
+    private readonly IConnectionStatusProvider _connectionProvider;
 
     // 電源状態
     [ObservableProperty] private double _batteryLevel;
@@ -23,18 +23,18 @@ public partial class StatusViewModel : ViewModelBase
 
     [ObservableProperty] private string _lastUpdated = string.Empty;
 
-    public StatusViewModel(IPowerStatusService powerService, IConnectionStatusService connectionService)
+    public StatusViewModel(IPowerStatusProvider powerProvider, IConnectionStatusProvider connectionProvider)
     {
-        _powerService = powerService;
-        _connectionService = connectionService;
+        _powerProvider = powerProvider;
+        _connectionProvider = connectionProvider;
 
         // イベント購読
-        _powerService.StatusUpdated += OnPowerStatusUpdated;
-        _connectionService.StatusUpdated += OnConnectionStatusUpdated;
+        _powerProvider.StatusUpdated += OnPowerStatusUpdated;
+        _connectionProvider.StatusUpdated += OnConnectionStatusUpdated;
 
         // 初期値のセット
-        UpdateFromPower(_powerService.CurrentStatus);
-        UpdateFromConnection(_connectionService.CurrentStatus);
+        UpdateFromPower(_powerProvider.CurrentStatus);
+        UpdateFromConnection(_connectionProvider.CurrentStatus);
     }
 
     private void OnPowerStatusUpdated(PowerStatus status) => UpdateFromPower(status);
@@ -64,7 +64,7 @@ public partial class StatusViewModel : ViewModelBase
     [RelayCommand]
     private void Refresh()
     {
-        _powerService.RequestUpdate();
-        _connectionService.RequestUpdate();
+        _powerProvider.RequestUpdate();
+        _connectionProvider.RequestUpdate();
     }
 }

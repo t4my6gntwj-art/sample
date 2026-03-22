@@ -1,42 +1,58 @@
+using AvaloniaDiApp.Contracts;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading.Tasks;
 
 namespace AvaloniaDiApp.ViewModels;
 
 public partial class DebugWindowViewModel : ViewModelBase
 {
-    private readonly IServiceProvider? _services;
+    private readonly IPowerStatusReceiver _powerReceiver;
+    private readonly IPowerStatusProvider _powerProvider; // 現在値を知るために Provider も使う
 
-    // プレビュー・デザイナー用のデフォルトコンストラクタ
-    public DebugWindowViewModel()
+    [ObservableProperty] private bool _isDraining;
+
+    public DebugWindowViewModel(IPowerStatusReceiver powerReceiver, IPowerStatusProvider powerProvider)
     {
+        _powerReceiver = powerReceiver;
+        _powerProvider = powerProvider;
     }
-
-    // DIコンテナから注入されるコンストラクタ
-    public DebugWindowViewModel(IServiceProvider services)
-    {
-        _services = services;
-    }
-
-    [ObservableProperty]
-    private string _debugMessage = "This is a Debug Window!";
 
     [RelayCommand]
-    private void Test()
+    private async Task StartDrain()
     {
-        // サービスプロバイダが注入されているか確認するメッセージ
-        if (_services != null)
-        {
-            DebugMessage = "Test Button Clicked! (ServiceProvider 注入済み)";
+        if (IsDraining) return;
+        IsDraining = true;
 
-            var mainWindowViewModel = _services.GetRequiredService<MainWindowViewModel>();
-            mainWindowViewModel.Greeting = "Test Button Clicked! (ServiceProvider 注入済み)";
-        }
-        else
+        try
         {
-            DebugMessage = "Test Button Clicked! (ServiceProvider なし)";
+            while (IsDraining)
+            {
+                var currentLevel = _powerProvider.CurrentStatus.BatteryLevel;
+                if (currentLevel <= 0) break;
+
+                // 5% 減らす
+                _powerReceiver.UpdateBatteryLevel(currentLevel - 5);
+                
+                await Task.Delay(1000);
+            }
         }
+        finally
+        {
+            IsDraining = false;
+        }
+    }
+
+    [RelayCommand]
+    private void StopDrain()
+    {
+        IsDraining = false;
+    }
+
+    [RelayCommand]
+    private void ResetBattery()
+    {
+        _powerReceiver.UpdateBatteryLevel(100);
     }
 }
