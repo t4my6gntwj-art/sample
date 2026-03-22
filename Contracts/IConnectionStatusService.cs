@@ -1,7 +1,7 @@
 using System;
 using AvaloniaDiApp.Models.Data;
 
-namespace AvaloniaDiApp.Services;
+namespace AvaloniaDiApp.Contracts;
 
 public interface IConnectionStatusService
 {

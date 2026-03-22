@@ -1,9 +1,9 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using AvaloniaDiApp.ViewModels;
-using AvaloniaDiApp.Services;
+using AvaloniaDiApp.Contracts;
 
-namespace AvaloniaDiApp.Services.Navigation;
+namespace AvaloniaDiApp.Infrastructure.Navigation;
 
 public class NavigationService : INavigationService
 {

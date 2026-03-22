@@ -1,5 +1,4 @@
-using AvaloniaDiApp.Services;
-using AvaloniaDiApp.Services.Navigation;
+using AvaloniaDiApp.Contracts;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;

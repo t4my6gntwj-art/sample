@@ -1,7 +1,7 @@
 using System;
 using AvaloniaDiApp.ViewModels;
 
-namespace AvaloniaDiApp.Services;
+namespace AvaloniaDiApp.Contracts;
 
 public interface IContentHolder
 {

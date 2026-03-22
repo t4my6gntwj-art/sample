@@ -6,7 +6,7 @@ using System.Linq;
 using Avalonia.Markup.Xaml;
 using AvaloniaDiApp.ViewModels;
 using AvaloniaDiApp.Views;
-using AvaloniaDiApp.Services;
+using AvaloniaDiApp.Contracts;
 using System;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,8 +1,8 @@
 using System;
 using AvaloniaDiApp.Models.Data;
-using AvaloniaDiApp.Services;
+using AvaloniaDiApp.Contracts;
 
-namespace AvaloniaDiApp.Models.Services;
+namespace AvaloniaDiApp.Models.Logic;
 
 public class SettingsService : ISettingsService
 {

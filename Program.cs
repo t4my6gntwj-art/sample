@@ -4,10 +4,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using AvaloniaDiApp.Views;
 using AvaloniaDiApp.ViewModels;
-using AvaloniaDiApp.Services;
-using AvaloniaDiApp.Services.Navigation;
+using AvaloniaDiApp.Contracts;
 using AvaloniaDiApp.Models.Data;
-using AvaloniaDiApp.Models.Services;
+using AvaloniaDiApp.Models.Logic;
+using AvaloniaDiApp.Infrastructure.Navigation;
 
 namespace AvaloniaDiApp;
 
@@ -25,7 +25,7 @@ sealed class Program
             {
                 // サービスの登録
                 services.AddSingleton<LayoutViewModel>();
-                services.AddSingleton<IContentHolder>(sp => sp.GetRequiredService<LayoutViewModel>());
+                services.AddSingleton<IContentHolder>(sp => (IContentHolder)sp.GetRequiredService<LayoutViewModel>());
                 services.AddSingleton<INavigationService, NavigationService>();
                 services.AddSingleton<ISettingsService, SettingsService>();
                 services.AddSingleton<IPowerStatusService, PowerStatusService>();
