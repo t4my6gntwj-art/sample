@@ -13,21 +13,26 @@ public class ConnectionStatusRepository : IConnectionStatusProvider, IConnection
 
     public void RequestUpdate() => StatusUpdated?.Invoke(_status);
 
-    public void UpdateIsOnline(bool isOnline)
+    public void Receive(byte[] data)
     {
-        _status = _status with { IsOnline = isOnline };
-        StatusUpdated?.Invoke(_status);
-    }
+        if (data == null || data.Length < 3) return;
 
-    public void UpdateConnectionType(string type)
-    {
-        _status = _status with { Type = type };
-        StatusUpdated?.Invoke(_status);
-    }
+        var isOnline = data[0] == 1;
+        var type = data[1] switch
+        {
+            0 => "WiFi",
+            1 => "Ethernet",
+            2 => "Cellular",
+            _ => "Unknown"
+        };
+        var signal = (int)data[2];
 
-    public void UpdateSignalStrength(int strength)
-    {
-        _status = _status with { SignalStrength = Math.Clamp(strength, 0, 100) };
+        _status = new ConnectionStatus(
+            IsOnline: isOnline,
+            Type: type,
+            SignalStrength: Math.Clamp(signal, 0, 100)
+        );
+
         StatusUpdated?.Invoke(_status);
     }
 }

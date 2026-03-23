@@ -1,4 +1,5 @@
 using AvaloniaDiApp.Contracts;
+using AvaloniaDiApp.Models.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -32,8 +33,13 @@ public partial class DebugWindowViewModel : ViewModelBase
                 var currentLevel = _powerProvider.CurrentStatus.BatteryLevel;
                 if (currentLevel <= 0) break;
 
-                // 5% 減らす
-                _powerReceiver.UpdateBatteryLevel(currentLevel - 5);
+                // バイト配列（パケット）を組み立てる
+                byte[] data = new byte[3];
+                data[0] = (byte)Math.Max(0, currentLevel - 5); // 5% 減らす
+                data[1] = 0; // 充電してない
+                data[2] = 0; // Performanceモード
+                
+                _powerReceiver.Receive(data);
                 
                 await Task.Delay(1000);
             }
@@ -45,14 +51,17 @@ public partial class DebugWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void StopDrain()
-    {
-        IsDraining = false;
-    }
+    private void StopDrain() => IsDraining = false;
 
     [RelayCommand]
     private void ResetBattery()
     {
-        _powerReceiver.UpdateBatteryLevel(100);
+        // 100%かつ充電中のパケットを作成
+        byte[] data = new byte[3];
+        data[0] = 100;
+        data[1] = 1; // 充電中
+        data[2] = 0; // Performanceモード
+        
+        _powerReceiver.Receive(data);
     }
 }

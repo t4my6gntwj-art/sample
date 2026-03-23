@@ -13,21 +13,30 @@ public class PowerStatusRepository : IPowerStatusProvider, IPowerStatusReceiver
 
     public void RequestUpdate() => StatusUpdated?.Invoke(_status);
 
-    public void UpdateBatteryLevel(double level)
+    // バイナリ受信時の解析処理を実装
+    public void Receive(byte[] data)
     {
-        _status = _status with { BatteryLevel = Math.Clamp(level, 0, 100) };
-        StatusUpdated?.Invoke(_status);
-    }
+        if (data == null || data.Length < 3) return;
 
-    public void UpdateIsCharging(bool isCharging)
-    {
-        _status = _status with { IsCharging = isCharging };
-        StatusUpdated?.Invoke(_status);
-    }
+        // 簡単なパース処理（バイナリからドメインモデルへ）
+        var battery = (double)data[0];
+        var isCharging = data[1] == 1;
+        var mode = data[2] switch
+        {
+            0 => "Performance",
+            1 => "Silent",
+            2 => "Balanced",
+            _ => "Unknown"
+        };
 
-    public void UpdatePowerMode(string mode)
-    {
-        _status = _status with { Mode = mode };
+        // 状態の更新
+        _status = new PowerStatus(
+            BatteryLevel: Math.Clamp(battery, 0, 100),
+            IsCharging: isCharging,
+            Mode: mode
+        );
+
+        // 通知
         StatusUpdated?.Invoke(_status);
     }
 }
