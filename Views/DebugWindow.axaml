@@ -20,12 +20,17 @@
         
         <TextBlock Text="🔋 電池シミュレーション (1s毎に-5%)" />
         <StackPanel Orientation="Horizontal" Spacing="10">
-            <Button Content="開始" Command="{Binding StartDrainCommand}" IsEnabled="{Binding !IsDraining}" />
-            <Button Content="停止" Command="{Binding StopDrainCommand}" IsEnabled="{Binding IsDraining}" />
             <Button Content="100%にリセット" Command="{Binding ResetBatteryCommand}" />
         </StackPanel>
 
-        <TextBlock Text="※ StatusView を開いたまま実行すると反映が確認できます" FontSize="10" Opacity="0.5" />
+        <Separator Height="20" Opacity="0" />
+
+        <TextBlock Text="🚀 複雑な設定シーケンス (A->B->C->D)" FontWeight="Bold" />
+        <Button Content="一括設定シーケンスを実行" Command="{Binding RunSetupSequenceCommand}" Classes="accent" />
+        
+        <Border Background="#2a2a2a" Padding="10" CornerRadius="5">
+            <TextBlock Text="{Binding Log}" Foreground="Lime" FontSize="11" FontFamily="Consolas,Monaco,Courier New" TextWrapping="Wrap" />
+        </Border>
     </StackPanel>
 
 </Window>

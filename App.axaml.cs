@@ -7,6 +7,7 @@ using Avalonia.Markup.Xaml;
 using AvaloniaDiApp.ViewModels;
 using AvaloniaDiApp.Views;
 using AvaloniaDiApp.Contracts;
+using AvaloniaDiApp.Infrastructure.Network;
 using System;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -40,9 +41,14 @@ public partial class App : Application
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
 
-            // DI コンテナ (_services) から MainWindow を解決する
-            // DI コンテナ (_services) からメインウィンドウを取得
-            var mainWindow = _services?.GetRequiredService<MainWindow>();
+            // DI コンテナ (_services) が初期化されていない場合は早期終了
+            if (_services == null) return;
+
+            // 各サービスを解決して起動（イベント購読開始など）
+            _services.GetRequiredService<NetworkMessageDispatcher>();
+            _services.GetRequiredService<MockDeviceService>();
+            
+            var mainWindow = _services.GetRequiredService<MainWindow>();
             
             if (mainWindow != null)
             {

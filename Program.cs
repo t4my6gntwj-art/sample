@@ -8,6 +8,7 @@ using AvaloniaDiApp.Contracts;
 using AvaloniaDiApp.Models.Data;
 using AvaloniaDiApp.Models.Logic;
 using AvaloniaDiApp.Infrastructure.Navigation;
+using AvaloniaDiApp.Infrastructure.Network;
 
 namespace AvaloniaDiApp;
 
@@ -38,6 +39,23 @@ sealed class Program
                 services.AddSingleton<ConnectionStatusRepository>();
                 services.AddSingleton<IConnectionStatusProvider>(sp => sp.GetRequiredService<ConnectionStatusRepository>());
                 services.AddSingleton<IConnectionStatusReceiver>(sp => sp.GetRequiredService<ConnectionStatusRepository>());
+
+                // トランスポート & 配送デリバリーの登録
+                services.AddSingleton<FakeNetworkTransport>();
+                services.AddSingleton<INetworkTransport>(sp => sp.GetRequiredService<FakeNetworkTransport>());
+                
+                // NetworkMessageDispatcher をシングルトン登録、かつホストサービスとしても登録
+                services.AddSingleton<NetworkMessageDispatcher>();
+                services.AddHostedService<NetworkMessageDispatcher>(sp => sp.GetRequiredService<NetworkMessageDispatcher>());
+
+                // 魔法のクライアント (同期化ラッパー)
+                services.AddSingleton<INetworkClient, NetworkClient>();
+
+                // 設定シナリオサービス
+                services.AddSingleton<IDeviceSetupService, DeviceSetupService>();
+
+                // 模擬デバイス (テスト用)
+                services.AddSingleton<MockDeviceService>();
 
                 // App自身の登録
                 services.AddSingleton<App>();

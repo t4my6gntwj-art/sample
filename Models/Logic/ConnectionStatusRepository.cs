@@ -1,6 +1,7 @@
 using System;
 using AvaloniaDiApp.Models.Data;
 using AvaloniaDiApp.Contracts;
+using AvaloniaDiApp.Infrastructure.Network;
 
 namespace AvaloniaDiApp.Models.Logic;
 
@@ -12,6 +13,17 @@ public class ConnectionStatusRepository : IConnectionStatusProvider, IConnection
     public ConnectionStatus CurrentStatus => _status;
 
     public void RequestUpdate() => StatusUpdated?.Invoke(_status);
+
+    public ConnectionStatusRepository(NetworkMessageDispatcher dispatcher)
+    {
+        dispatcher.MessageReady += (data) =>
+        {
+            if (data != null && data.Length > 0 && data[0] == 0x02) // 接続データID
+            {
+                Receive(data);
+            }
+        };
+    }
 
     public void Receive(byte[] data)
     {
@@ -27,12 +39,16 @@ public class ConnectionStatusRepository : IConnectionStatusProvider, IConnection
         };
         var signal = (int)data[2];
 
-        _status = new ConnectionStatus(
+        var newStatus = new ConnectionStatus(
             IsOnline: isOnline,
             Type: type,
             SignalStrength: Math.Clamp(signal, 0, 100)
         );
 
-        StatusUpdated?.Invoke(_status);
+        if (newStatus != _status)
+        {
+            _status = newStatus;
+            StatusUpdated?.Invoke(_status);
+        }
     }
 }
