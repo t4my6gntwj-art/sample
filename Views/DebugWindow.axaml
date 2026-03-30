@@ -1,36 +1,84 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:AvaloniaDiApp.ViewModels"
+        xmlns:controls="clr-namespace:AvaloniaDiApp.Views.Controls.EmbossButton"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="300"
-        Width="400" Height="300"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="750"
+        Width="400" Height="750"
         x:Class="AvaloniaDiApp.Views.DebugWindow"
         x:DataType="vm:DebugWindowViewModel"
-        Title="DebugWindow">
+        Title="Industrial Debug Tools (ControlTheme Version)">
 
     <Design.DataContext>
         <vm:DebugWindowViewModel/>
     </Design.DataContext>
 
-    <StackPanel Margin="20" Spacing="10">
-        <TextBlock Text="デバッグコントロール" FontSize="18" FontWeight="Bold"/>
-        
-        <Separator Height="10" Opacity="0" />
-        
-        <TextBlock Text="🔋 電池シミュレーション (1s毎に-5%)" />
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <Button Content="100%にリセット" Command="{Binding ResetBatteryCommand}" />
+    <ScrollViewer>
+        <StackPanel Margin="20" Spacing="15">
+            <TextBlock Text="🚨 エミュレーション制御" FontSize="20" FontWeight="Heavy" Margin="0,0,0,10"/>
+            
+            <TextBlock Text="🔋 電池状態シミュレート" FontWeight="SemiBold"/>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <!-- 実験1: クラスによる自動適用 -->
+                <Button Classes="emboss" Content="100%リセット" 
+                        Command="{Binding ResetBatteryCommand}" 
+                        Width="140"
+                        Background="#404040"
+                        Foreground="White"/>
+            </StackPanel>
+
+            <Separator Height="1" Opacity="0.2" Background="Gray"/>
+
+            <TextBlock Text="🎯 直接テーマ指定 (検証用)" FontWeight="SemiBold" Foreground="Yellow" />
+            <StackPanel Spacing="10">
+                <!-- 実験2: 直接テーマを指名して適用（確実にエンボスを表示させる） -->
+                <Button Theme="{StaticResource EmbossButtonTheme}"
+                        Content="決定盤：エンボス" 
+                        HorizontalAlignment="Stretch" Height="60"/>
+            </StackPanel>
+            
+            <Separator Height="1" Opacity="0.2" Background="Gray"/>
+
+            <TextBlock Text="🚦 ステータス主導ラベル" FontWeight="SemiBold" />
+            <StackPanel Spacing="10">
+                <Button Classes="emboss"
+                        controls:Emboss.Status="{Binding #StatusSelector.SelectedValue}"
+                        controls:Emboss.NormalContent="待機中 (IDLE)"
+                        controls:Emboss.SelectedContent="実行中 (RUNNING)"
+                        controls:Emboss.ErrorContent="！！異常発生！！"
+                        controls:Emboss.DisabledContent="ロック中"
+                        HorizontalAlignment="Stretch" Height="60"/>
+
+                <ComboBox x:Name="StatusSelector" HorizontalAlignment="Stretch" SelectedIndex="0">
+                    <controls:EmbossStatus>Normal</controls:EmbossStatus>
+                    <controls:EmbossStatus>Selected</controls:EmbossStatus>
+                    <controls:EmbossStatus>Error</controls:EmbossStatus>
+                    <controls:EmbossStatus>Disabled</controls:EmbossStatus>
+                </ComboBox>
+            </StackPanel>
+            
+            <Separator Height="1" Opacity="0.2" Background="Gray"/>
+
+            <TextBlock Text="🔄 トグルボタン" FontWeight="SemiBold" />
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <ToggleButton Classes="emboss" Width="260"
+                              controls:Emboss.NormalContent="スイッチ：切 (OFF)"
+                              controls:Emboss.SelectedContent="スイッチ：入 (ON)"/>
+            </StackPanel>
+
+            <Separator Height="1" Opacity="0.2" Background="Gray"/>
+
+            <TextBlock Text="⭕️ ラジオボタン (排他選択)" FontWeight="SemiBold" />
+            <UniformGrid Columns="3">
+                <RadioButton Classes="emboss" Content="低速" GroupName="Speed" IsChecked="True" Height="50" Margin="2"/>
+                <RadioButton Classes="emboss" Content="中速" GroupName="Speed" Height="50" Margin="2"/>
+                <RadioButton Classes="emboss" Content="高速" GroupName="Speed" Height="50" Margin="2"/>
+            </UniformGrid>
+
+            <Border Background="#1a1a1a" Padding="15" CornerRadius="8" BoxShadow="inset 2 2 5 #80000000" Margin="0,10,0,0">
+                <TextBlock Text="{Binding Log}" Foreground="Lime" FontSize="11" FontFamily="Consolas" Height="80" TextWrapping="Wrap" />
+            </Border>
         </StackPanel>
-
-        <Separator Height="20" Opacity="0" />
-
-        <TextBlock Text="🚀 複雑な設定シーケンス (A->B->C->D)" FontWeight="Bold" />
-        <Button Content="一括設定シーケンスを実行" Command="{Binding RunSetupSequenceCommand}" Classes="accent" />
-        
-        <Border Background="#2a2a2a" Padding="10" CornerRadius="5">
-            <TextBlock Text="{Binding Log}" Foreground="Lime" FontSize="11" FontFamily="Consolas,Monaco,Courier New" TextWrapping="Wrap" />
-        </Border>
-    </StackPanel>
-
+    </ScrollViewer>
 </Window>

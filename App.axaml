@@ -2,14 +2,42 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="AvaloniaDiApp.App"
              xmlns:local="using:AvaloniaDiApp"
+             xmlns:controls="clr-namespace:AvaloniaDiApp.Views.Controls.EmbossButton"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- エンボスボタン・パッケージの読み込み -->
+                <ResourceInclude Source="avares://AvaloniaDiApp/Views/Controls/EmbossButton/EmbossStyles.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
   
     <Application.Styles>
         <FluentTheme />
+
+        <!-- 
+            【実験的アプローチ】
+            DynamicResource を使い、かつ優先順位を確保するため Style で適用。
+        -->
+        <Style Selector="Button.emboss">
+            <Setter Property="Theme" Value="{DynamicResource EmbossButtonTheme}" />
+            <Setter Property="controls:Emboss.IsEmbossed" Value="True"/>
+        </Style>
+
+        <Style Selector="ToggleButton.emboss">
+            <Setter Property="Theme" Value="{DynamicResource EmbossToggleButtonTheme}" />
+            <Setter Property="controls:Emboss.IsEmbossed" Value="True"/>
+        </Style>
+
+        <Style Selector="RadioButton.emboss">
+            <Setter Property="Theme" Value="{DynamicResource EmbossRadioButtonTheme}" />
+            <Setter Property="controls:Emboss.IsEmbossed" Value="True"/>
+        </Style>
     </Application.Styles>
 </Application>
