@@ -121,7 +121,7 @@ public static class Emboss // エンボス効果を制御するための静的�
                     compositeDisposable.Add(cc.GetPropertyChangedObservable(ContentControl.ContentProperty).Subscribe(_ => UpdateDisplayContent(control)));
                 
                 if (control is ToggleButton tb) // ToggleButton の IsChecked プロパティ変更を購読
-                    compositeDisposable.Add(tb.GetPropertyChangedObservable(ToggleButton.IsCheckedProperty).Subscribe(_ => UpdateDisplayContent(control)));
+                    compositeDisposable.Add(tb.GetPropertyChangedObservable(ToggleButton.IsCheckedProperty).Subscribe(_ => { UpdateDisplayContent(control); UpdatePseudoClasses(control, GetStatus(control)); }));
 
                 // 購読リストをプロパティに保存（後で解除するため）
                 control.SetValue(SubscriptionProperty, compositeDisposable);
@@ -176,21 +176,25 @@ public static class Emboss // エンボス効果を制御するための静的�
     private static void UpdatePseudoClasses(Control control, EmbossStatus status)
     {
         var pc = (IPseudoClasses)control.Classes;
-        pc.Set(":normal", status == EmbossStatus.Normal); // 通常
-        pc.Set(":selected", status == EmbossStatus.Selected); // 選択
+
+        // 外部から指定されたステータス、もしくは ToggleButton系 の IsChecked が true なら「選択状態」とみなす
+        bool isActuallySelected = status == EmbossStatus.Selected || (control is ToggleButton tb && tb.IsChecked == true);
+
+        pc.Set(":normal", status == EmbossStatus.Normal && !isActuallySelected); // 通常
+        pc.Set(":selected", isActuallySelected); // 選択
         pc.Set(":error", status == EmbossStatus.Error); // エラー
         pc.Set(":status-disabled", status == EmbossStatus.Disabled); // ステータス起因の無効
 
-        // ステータスに応じたコントロールの活性・非活性制御
+        // ステータス別活性制御
         if (status == EmbossStatus.Disabled)
         {
             control.IsEnabled = false; // 無効状態なら操作不能にする
         }
-        else if (status == EmbossStatus.Selected)
+        else if (isActuallySelected)
         {
-            // ToggleButton 以外であれば、選択済み＝実行不可として非活性にする
-            // ToggleButton の場合はオフに切り替える必要があるため活性を維持
-            control.IsEnabled = control is ToggleButton;
+            // ToggleButton（チェック解除が可能）の場合は活性を維持。
+            // ただし RadioButton は一度選択されるとクリックによる解除ができないため非活性にする。
+            control.IsEnabled = control is ToggleButton && control is not RadioButton;
         }
         else
         {
